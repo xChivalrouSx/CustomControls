@@ -32,9 +32,17 @@ namespace CustomControls.Common
         public static readonly Color COLOR_BUTTON_BLUE = Color.FromArgb(255, 3, 169, 244);
         public static readonly Color COLOR_BUTTON_BLUE_DARK = Color.FromArgb(255, 0, 122, 193);
         public static readonly Color COLOR_BUTTON_BLUE_LIGHT = Color.FromArgb(255, 103, 218, 255);
+        public static readonly Color COLOR_BUTTON_HOVER = Color.FromArgb(255, 0, 0, 0);
 
         #endregion
 
+
+        #region [ - Strings - ]
+
+
+        
+        #endregion
+        
 
         #region [ - Methods - ]
 

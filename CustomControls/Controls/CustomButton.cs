@@ -15,6 +15,14 @@ namespace CustomControls.Controls
     public partial class CustomButton : Button
     {
 
+        #region [ - Fields - ]
+
+        private int _hoverBorderSize = 0;
+        private Color _keepBackColor;
+
+        #endregion
+
+
         #region [ - Custom Properties - ]
 
         private Color _BackColor_custom = CommonClass.COLOR_BUTTON_BLUE;
@@ -38,7 +46,16 @@ namespace CustomControls.Controls
         public int BorderSize_custom
         {
             get { return _BorderSize_custom; }
-            set { _BorderSize_custom = value; this.Invalidate(); }
+            set
+            {
+                int control = (Width <= Height) ? Width / 3 : Height / 3;
+
+                if (value < 0) { value = 0; }
+                else if (value > control) { value = control; }
+
+                _BorderSize_custom = value;
+                this.Invalidate();
+            }
         }
 
         private bool _RoundedCorner_custom = true;
@@ -61,7 +78,7 @@ namespace CustomControls.Controls
             get { return _RoundValue_custom; }
             set
             {
-                if (_RoundedCorner_custom)
+                if (_RoundedCorner_custom && value > 0)
                 {
                     _RoundValue_custom = value;
                 }
@@ -72,6 +89,14 @@ namespace CustomControls.Controls
 
                 this.Invalidate();
             }
+        }
+
+        private int _HoverValue_custom = 15;
+        [Description("Set button hover density"), Category("_Custom")]
+        public int HoverValue_custom
+        {
+            get { return _HoverValue_custom; }
+            set { _HoverValue_custom = value; this.Invalidate(); }
         }
 
         #endregion
@@ -99,17 +124,22 @@ namespace CustomControls.Controls
                 // Draw Border if exist
                 pe.Graphics.FillRegion(
                     new SolidBrush(_BorderColor_custom),
-                    Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(0, 0, Width, Height, _RoundValue_custom, _RoundValue_custom))
-                    );
+                    Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(
+                        _hoverBorderSize, 
+                        _hoverBorderSize, 
+                        Width - _hoverBorderSize, 
+                        Height - _hoverBorderSize, 
+                        _RoundValue_custom, _RoundValue_custom
+                        )));
 
                 // Fill Button region
                 pe.Graphics.FillRegion(
                     new SolidBrush(_BackColor_custom),
                     Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(
-                        _BorderSize_custom,
-                        _BorderSize_custom,
-                        Width - _BorderSize_custom,
-                        Height - _BorderSize_custom,
+                        _BorderSize_custom + _hoverBorderSize,
+                        _BorderSize_custom + _hoverBorderSize,
+                        Width - _BorderSize_custom - _hoverBorderSize,
+                        Height - _BorderSize_custom - _hoverBorderSize,
                         _RoundValue_custom,
                         _RoundValue_custom
                         )));
@@ -127,7 +157,51 @@ namespace CustomControls.Controls
             this.Invalidate();
         }
 
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            base.OnMouseEnter(e);
+
+            _keepBackColor = _BackColor_custom;
+            _BackColor_custom = GetNewHoverColor(_BackColor_custom);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            base.OnMouseLeave(e);
+
+            _BackColor_custom = _keepBackColor;
+        }
+
         #endregion
 
+
+        #region [ - Private Methods - ]
+
+        private Color GetNewHoverColor(Color color)
+        {
+            int r, g, b;
+            r = g = b = 0;
+
+            // Set new values to R, G, B
+            r = color.R - _HoverValue_custom;
+            g = color.G - _HoverValue_custom;
+            b = color.B - _HoverValue_custom;
+
+            // Check R for is valid
+            r = (r > 255) ? 255 : r;
+            r = (r < 0) ? 0 : r;
+
+            // Check G for is valid
+            g = (g > 255) ? 255 : g;
+            g = (g < 0) ? 0 : g;
+            
+            // Check B for is valid
+            b = (b > 255) ? 255 : b;
+            b = (b < 0) ? 0 : b;
+
+            return Color.FromArgb(r, g, b);
+        }
+
+        #endregion
     }
 }
