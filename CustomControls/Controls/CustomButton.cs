@@ -17,7 +17,6 @@ namespace CustomControls.Controls
 
         #region [ - Custom Properties - ]
 
-
         private Color _BackColor_custom = CommonClass.COLOR_BUTTON_BLUE;
         [Description("Change the Custom Button BackColor"), Category("_Custom")]
         public Color BackColor_custom
@@ -42,6 +41,38 @@ namespace CustomControls.Controls
             set { _BorderSize_custom = value; this.Invalidate(); }
         }
 
+        private bool _RoundedCorner_custom = true;
+        [Description("Set Is Button has rounded corner or not"), Category("_Custom")]
+        public bool RoundedCorner_custom
+        {
+            get { return _RoundedCorner_custom; }
+            set
+            {
+                _RoundedCorner_custom = value;
+                RoundValue_custom = _RoundValue_custom;
+                //this.Invalidate();
+            }
+        }
+
+        private int _RoundValue_custom = 15;
+        [Description("Set button corner round value"), Category("_Custom")]
+        public int RoundValue_custom
+        {
+            get { return _RoundValue_custom; }
+            set
+            {
+                if (_RoundedCorner_custom)
+                {
+                    _RoundValue_custom = value;
+                }
+                else
+                {
+                    _RoundValue_custom = 0;
+                }
+
+                this.Invalidate();
+            }
+        }
 
         #endregion
 
@@ -65,7 +96,7 @@ namespace CustomControls.Controls
             // Draw Border if exist
             pe.Graphics.FillRegion(
                 new SolidBrush(_BorderColor_custom),
-                Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(0, 0, Width, Height, 15, 15))
+                Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(0, 0, Width, Height, _RoundValue_custom, _RoundValue_custom))
                 );
 
             // Fill Button region
@@ -76,9 +107,9 @@ namespace CustomControls.Controls
                     _BorderSize_custom,
                     Width - _BorderSize_custom,
                     Height - _BorderSize_custom,
-                    15, 15)
-                    )
-                );
+                    _RoundValue_custom,
+                    _RoundValue_custom
+                    )));
 
             // Set text
             pe.Graphics.DrawString(this.Text, this.Font, new SolidBrush(this.ForeColor), ClientRectangle, CommonClass.GetStringFormatCenter());
