@@ -93,26 +93,38 @@ namespace CustomControls.Controls
         {
             base.OnPaint(pe);
 
-            // Draw Border if exist
-            pe.Graphics.FillRegion(
-                new SolidBrush(_BorderColor_custom),
-                Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(0, 0, Width, Height, _RoundValue_custom, _RoundValue_custom))
-                );
+            // if no image setted than draw button
+            if (this.BackgroundImage == null && this.Image == null)
+            {
+                // Draw Border if exist
+                pe.Graphics.FillRegion(
+                    new SolidBrush(_BorderColor_custom),
+                    Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(0, 0, Width, Height, _RoundValue_custom, _RoundValue_custom))
+                    );
 
-            // Fill Button region
-            pe.Graphics.FillRegion(
-                new SolidBrush(_BackColor_custom),
-                Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(
-                    _BorderSize_custom,
-                    _BorderSize_custom,
-                    Width - _BorderSize_custom,
-                    Height - _BorderSize_custom,
-                    _RoundValue_custom,
-                    _RoundValue_custom
-                    )));
+                // Fill Button region
+                pe.Graphics.FillRegion(
+                    new SolidBrush(_BackColor_custom),
+                    Region.FromHrgn(CommonClass.CreateRoundRectangleRegion(
+                        _BorderSize_custom,
+                        _BorderSize_custom,
+                        Width - _BorderSize_custom,
+                        Height - _BorderSize_custom,
+                        _RoundValue_custom,
+                        _RoundValue_custom
+                        )));
 
-            // Set text
-            pe.Graphics.DrawString(this.Text, this.Font, new SolidBrush(this.ForeColor), ClientRectangle, CommonClass.GetStringFormatCenter());
+                // Set text
+                pe.Graphics.DrawString(this.Text, this.Font, new SolidBrush(this.ForeColor), ClientRectangle, CommonClass.GetStringFormatCenter());
+            }
+        }
+
+        protected override void OnBackColorChanged(EventArgs e)
+        {
+            base.OnBackColorChanged(e);
+
+            this.BackColor = this.Parent.BackColor;
+            this.Invalidate();
         }
 
         #endregion
